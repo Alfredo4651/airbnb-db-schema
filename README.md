@@ -87,7 +87,7 @@ All foreign keys use `ON DELETE CASCADE ON UPDATE CASCADE` to maintain referenti
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/your-username/airbnb-database.git
+git clone https://github.com/Alfredo4651/airbnb-database.git
 cd airbnb-database
 
 # 2. Open MySQL Workbench and connect to your server
@@ -143,25 +143,10 @@ Guest searches → filters by location, price, amenities
     → cancellation? → refund logged in booking_cancellation
 ```
 
----
-
-## 📁 Repository Structure
-
-```
-airbnb-database/
-│
-├── airbnb_db.sql          # Full schema (table creation)
-├── inserts/               # Data insertion scripts (ordered by dependency)
-├── README.md              # This file
-└── docs/
-    ├── metadata.pdf       # Table structures & cardinality
-    ├── abstract.pdf       # Project overview
-    └── installation.pdf   # Setup guide
-```
 
 ---
 
 ## 👤 Author
 
 **Your Name**
-[LinkedIn](https://linkedin.com/in/your-profile) · [GitHub](https://github.com/your-username)
+[LinkedIn](https://www.linkedin.com/in/alfredmichael01/) · [GitHub](https://github.com/Alfredo4651/airbnb-db-schema)
