@@ -25,11 +25,6 @@ The schema is organized around six core domains:
 | **Financials** | `payment`, `host_earnings`, `promotion`, `discount` |
 | **Reviews** | `review`, `property_review` |
 
----
-
-## 🗺️ Entity Relationship Diagram (ERD)
-
-![Airbnb Database ERD](docs/airbnb_erd.png)
 
 ---
 
