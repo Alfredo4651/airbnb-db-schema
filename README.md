@@ -143,5 +143,5 @@ Guest searches → filters by location, price, amenities
 
 ## 👤 Author
 
-**Your Name**
+**Alfred Michael**
 [LinkedIn](https://www.linkedin.com/in/alfredmichael01/) · [GitHub](https://github.com/Alfredo4651/airbnb-db-schema)
