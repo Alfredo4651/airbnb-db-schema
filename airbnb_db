@@ -1,0 +1,585 @@
+
+-- CREATION OF TABLES FOR THE AIRBNB DATASET
+
+-- 1. Creating Country table
+CREATE TABLE Country (
+    Country_ID INT AUTO_INCREMENT PRIMARY KEY, -- Primary Key
+    Name VARCHAR(50) NOT NULL,
+    Code VARCHAR(15) NOT NULL
+);
+
+-- 2. Creating City table
+CREATE TABLE City (
+    City_ID INT AUTO_INCREMENT PRIMARY KEY, -- Primary Key
+    Name VARCHAR(50) NOT NULL,
+    Country_ID INT NOT NULL, -- Foreign key referencing Country
+    FOREIGN KEY (Country_ID) REFERENCES Country(Country_ID) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- 3. Creating Address table
+CREATE TABLE Address (
+    Address_ID INT AUTO_INCREMENT PRIMARY KEY,
+    House_number INT NOT NULL,
+    Street_Name VARCHAR(50) NOT NULL,
+    Postal_code VARCHAR(15) NOT NULL,
+    Property_ID INT,
+    City_ID INT,
+    FOREIGN KEY (Property_ID) REFERENCES Property(Property_ID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (City_ID) REFERENCES City(City_ID) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+
+
+-- 4. Creating Users table
+CREATE TABLE Users (
+    User_ID INT AUTO_INCREMENT PRIMARY KEY, -- Primary Key
+    First_name VARCHAR(50) NOT NULL,
+    Last_name VARCHAR(50) NOT NULL,
+    Email VARCHAR(50) UNIQUE NOT NULL,
+    Phone_number INT NOT NULL
+);
+
+
+-- 5. Creating Property table
+CREATE TABLE Property (
+    Property_ID INT AUTO_INCREMENT PRIMARY KEY, -- Primary Key
+    Property_name VARCHAR(50) NOT NULL,
+    Price_per_night DECIMAL(10,2) NOT NULL,
+    Availability_status VARCHAR(15) NOT NULL,
+    Created_at DATE NOT NULL,
+    User_ID INT, -- Foreign key referencing User
+    FOREIGN KEY (User_ID) REFERENCES Users(User_ID) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- 6. Creating Booking table
+CREATE TABLE Booking (
+    Booking_ID INT AUTO_INCREMENT PRIMARY KEY, -- Primary Key
+    Check_in_date DATE NOT NULL,
+    Check_out_date DATE NOT NULL,
+    Total_price DECIMAL(10,2) NOT NULL,
+    State VARCHAR(15) NOT NULL,
+    Property_ID INT NOT NULL, -- Foreign key referencing Property
+    User_ID INT NOT NULL, -- Foreign key referencing User
+    FOREIGN KEY (Property_ID) REFERENCES Property(Property_ID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (User_ID) REFERENCES Users(User_ID) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- 7. Creating Payment table
+CREATE TABLE Payment (
+    Payment_ID INT AUTO_INCREMENT PRIMARY KEY, -- Primary Key
+    Amount DECIMAL(10,2) NOT NULL,
+    Payment_method VARCHAR(10) NOT NULL,
+    Payment_date DATE NOT NULL,
+    Booking_ID INT NOT NULL, -- Foreign key referencing Booking
+    User_ID INT NOT NULL, -- Foreign key referencing User
+    FOREIGN KEY (Booking_ID) REFERENCES Booking(Booking_ID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (User_ID) REFERENCES Users(User_ID) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- 8. Creating Booking_Cancellation table
+CREATE TABLE Booking_Cancellation (
+    Booking_can_ID INT AUTO_INCREMENT PRIMARY KEY, -- Primary Key
+    Refund_amount DECIMAL(10,2) NOT NULL,
+    Cancellation_date DATE NOT NULL,
+    Booking_ID INT NOT NULL, -- Foreign key referencing Booking
+    FOREIGN KEY (Booking_ID) REFERENCES Booking(Booking_ID) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- 9. Creating Property_Review table
+CREATE TABLE Property_Review (
+    Property_Review_ID INT AUTO_INCREMENT PRIMARY KEY, -- Primary Key
+    Review_ID INT NOT NULL, -- Foreign key referencing Review
+    Property_ID INT NOT NULL, -- Foreign key referencing Property
+    FOREIGN KEY (Review_ID) REFERENCES Review(Review_ID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (Property_ID) REFERENCES Property(Property_ID) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- 10. Creating Review table
+CREATE TABLE Review (
+    Review_ID INT AUTO_INCREMENT PRIMARY KEY, -- Primary Key
+    Rating DECIMAL(2,1) NOT NULL,
+    Comments TEXT NOT NULL,
+    Created_at DATE NOT NULL,
+    User_ID INT NOT NULL, -- Foreign key referencing User
+    FOREIGN KEY (User_ID) REFERENCES Users(User_ID) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- 11. Creating House_Rules table
+CREATE TABLE House_Rules (
+    Rule_ID INT AUTO_INCREMENT PRIMARY KEY, -- Primary Key
+    Descriptions TEXT NOT NULL,
+    Property_ID INT NOT NULL, -- Foreign key referencing Property
+    FOREIGN KEY (Property_ID) REFERENCES Property(Property_ID) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+
+-- 12. Creating Promotion table
+CREATE TABLE Promotion (
+    Promotion_ID INT AUTO_INCREMENT PRIMARY KEY, -- Primary Key
+    Promo_code VARCHAR(20) NOT NULL,
+    Discount_amount DECIMAL(10,2) NOT NULL,
+    Expiry_date DATE NOT NULL,
+    Property_ID INT NOT NULL, -- Foreign key referencing Property
+    FOREIGN KEY (Property_ID) REFERENCES Property(Property_ID) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- 13. Creating Property_Amenity table
+CREATE TABLE Property_Amenity (
+    Property_Amenity_ID INT AUTO_INCREMENT PRIMARY KEY, -- Primary Key
+    Property_ID INT NOT NULL, -- Foreign key referencing Property
+    Amenity_ID INT NOT NULL, -- Foreign key referencing Amenity
+    FOREIGN KEY (Property_ID) REFERENCES Property(Property_ID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (Amenity_ID) REFERENCES Amenity(Amenity_ID) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- 14. Creating Amenity table
+CREATE TABLE Amenity (
+    Amenity_ID INT AUTO_INCREMENT PRIMARY KEY, -- Primary Key
+    Amenity_name VARCHAR(50) NOT NULL
+);
+
+
+-- 15. Creating Property_Image table
+CREATE TABLE Property_Image (
+    Image_ID INT AUTO_INCREMENT PRIMARY KEY, -- Primary Key
+    Image_url VARCHAR(300) NOT NULL,
+    Property_ID INT NOT NULL, -- Foreign key referencing Property
+    FOREIGN KEY (Property_ID) REFERENCES Property(Property_ID) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- 16. Creating Guest_Identity table
+CREATE TABLE Guest_Identity (
+    Identity_ID INT AUTO_INCREMENT PRIMARY KEY, -- Primary Key
+    ID_type VARCHAR(15) NOT NULL,
+    ID_number INT NOT NULL,
+    ID_photo_URL VARCHAR(300) NOT NULL,
+    Selfie_URL VARCHAR(300) NOT NULL,
+    Verification_status VARCHAR(15) NOT NULL,
+    Submitted_at DATE NOT NULL,
+    User_ID INT NOT NULL, -- Foreign key referencing User
+    Language_ID INT NOT NULL, -- Foreign key referencing Language
+
+    FOREIGN KEY (User_ID) REFERENCES Users(User_ID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (Language_ID) REFERENCES Language (Language_ID) ON DELETE CASCADE   ON UPDATE CASCADE
+);
+
+-- 17. Creating Host_Identity table
+CREATE TABLE Host_Identity (
+    Host_ID INT AUTO_INCREMENT PRIMARY KEY, -- Primary Key
+    Document_Type VARCHAR(20) NOT NULL,
+    Document_URL VARCHAR(100) NOT NULL,
+    User_ID INT NOT NULL, -- Foreign key referencing User
+    FOREIGN KEY (User_ID) REFERENCES Users(User_ID) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- 18. Creating Host_Earnings table
+CREATE TABLE Host_Earnings (
+    Earnings_ID INT AUTO_INCREMENT PRIMARY KEY, -- Primary Key
+    Amount DECIMAL(10,2) NOT NULL,
+    Payout_method VARCHAR(10) NOT NULL,
+    Host_ID INT NOT NULL, -- Foreign key referencing User
+    FOREIGN KEY (Host_ID) REFERENCES Host_Identity(Host_ID) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+
+-- 19. Creating Language table
+CREATE TABLE Language (
+    Language_ID INT AUTO_INCREMENT PRIMARY KEY, -- Unique ID for each language
+    Lang VARCHAR(50) NOT NULL UNIQUE -- Ensures no duplicate language entries
+);
+
+
+
+-- 20. Creating Discount table
+CREATE TABLE Discount (
+    Percentage_ID INT AUTO_INCREMENT PRIMARY KEY, -- Primary Key
+    Start_date DATE NOT NULL,
+    End_date DATE NOT NULL,
+	Percentage INT NOT NULL, 
+    Property_ID INT NOT NULL, -- Foreign key referencing Property
+    FOREIGN KEY (Property_ID) REFERENCES Property(Property_ID) ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- INSERTION OF VALUES INTO THE CREATED TABLES
+
+-- 1. Creating Country table
+INSERT INTO Country (Name, Code, Property_ID) VALUES
+('Germany', 'DE', 5), ('Canada', 'CA', 12),
+('United Kingdom', 'GB', 3), ('France', 'FR', 17),
+('United States', 'US', 9), ('Italy', 'IT', 20),
+('Spain', 'ES', 7), ('Australia', 'AU', 14),
+('Netherlands', 'NL', 2), ('Sweden', 'SE', 18),
+('Switzerland', 'CH', 6), ('Brazil', 'BR', 10),
+('Mexico', 'MX', 15), ('Japan', 'JP', 1),
+('China', 'CN', 11), ('India', 'IN', 4),
+('South Africa', 'ZA', 19), ('South Korea', 'KR', 8),
+('New Zealand', 'NZ', 16), ('Russia', 'RU', 13);
+
+
+INSERT INTO City (Name, Country_ID) VALUES
+('Berlin', 1), ('Toronto', 2),
+('London', 3), ('Paris', 4),
+('New York', 5), ('Rome', 6),
+('Madrid', 7), ('Sydney', 8),
+('Amsterdam', 9), ('Stockholm', 10),
+('Zurich', 11), ('Rio de Janeiro', 12),
+('Mexico City', 13), ('Tokyo', 14),
+('Beijing', 15), ('Mumbai', 16),
+('Cape Town', 17), ('Seoul', 18),
+('Auckland', 19), ('Moscow', 20);
+
+
+
+
+
+-- 3. Inserting data into Address table
+INSERT INTO Address (House_number, Street_Name, Postal_code, Property_ID, City_ID) VALUES
+(12, 'Unter den Linden', '10117', 5, 1), (45, 'Queen St W', 'M5V 2A3', 12, 2),
+(78, 'Baker Street', 'NW1 6XE', 8, 3), (23, 'Avenue des Champs-Élysées', '75008', 3, 4),
+(56, 'Broadway', '10007', 16, 5), (34, 'Via Condotti', '00187', 1, 6),
+(89, 'Gran Via', '28013', 14, 7), (77, 'George Street', '2000', 20, 8),
+(15, 'Prinsengracht', '1015', 9, 9), (60, 'Drottninggatan', '11121', 7, 10),
+(99, 'Bahnhofstrasse', '8001', 19, 11), (31, 'Avenida Atlântica', '22021-001', 4, 12),
+(47, 'Paseo de la Reforma', '06500', 10, 13), (81, 'Shibuya Crossing', '150-0002', 6, 14),
+(66, 'Wangfujing Street', '100006', 2, 15), (22, 'Marine Drive', '400020', 18, 16),
+(39, 'Long Street', '8001', 11, 17), (53, 'Gangnam-daero', '135-010', 15, 18),
+(27, 'Queen Street', '1010', 13, 19), (90, 'Tverskaya Street', '125009', 17, 20);
+
+
+
+-- 4. Inserting data into Users table
+INSERT INTO Users (First_name, Last_name, Email, Phone_number) VALUES 
+('John', 'Doe', 'john.doe@email.com', 1234567890), ('Jane', 'Smith', 'jane.smith@email.com', 2345678901), 
+('Alice', 'Brown', 'alice.brown@email.com', 3456789012), ('Bob', 'Johnson', 'bob.johnson@email.com', 4567890123), 
+('Charlie', 'Davis', 'charlie.davis@email.com', 5678901234), ('Emily', 'White', 'emily.white@email.com', 6789012345), 
+('Frank', 'Moore', 'frank.moore@email.com', 7890123456), ('Grace', 'Taylor', 'grace.taylor@email.com', 8901234567), 
+('Henry', 'Anderson', 'henry.anderson@email.com', 9012345678), ('Isabel', 'Thomas', 'isabel.thomas@email.com', 1231231234), 
+('Jack', 'Harris', 'jack.harris@email.com', 2342342345), ('Karen', 'Martin', 'karen.martin@email.com', 3453453456), 
+('Leo', 'Thompson', 'leo.thompson@email.com', 4564564567), ('Mia', 'Garcia', 'mia.garcia@email.com', 5675675678), 
+('Nathan', 'Martinez', 'nathan.martinez@email.com', 6786786789), ('Olivia', 'Robinson', 'olivia.robinson@email.com', 7897897890), 
+('Paul', 'Clark', 'paul.clark@email.com', 8908908901), ('Quinn', 'Rodriguez', 'quinn.rodriguez@email.com', 9019019012), 
+('Rachel', 'Lewis', 'rachel.lewis@email.com', 1233211233), ('Sam', 'Walker', 'sam.walker@email.com', 2344322344), ('Tony', 'Allen', 'tony.allen@email.com', 1112223333),
+('Ursula', 'Young', 'ursula.young@email.com', 2223334444), ('Victor', 'King', 'victor.king@email.com', 3334445555), ('Wendy', 'Wright', 'wendy.wright@email.com', 4445556666), ('Xavier', 'Hill', 'xavier.hill@email.com', 5556667777),
+('Yvonne', 'Green', 'yvonne.green@email.com', 6667778888), ('Zachary', 'Baker', 'zachary.baker@email.com', 7778889999), ('Abigail', 'Cook', 'abigail.cook@email.com', 8889990000), ('Benjamin', 'Carter', 'benjamin.carter@email.com', 9990001111),
+('Charlotte', 'Mitchell', 'charlotte.mitchell@email.com', 0001112222), ('Daniel', 'Perez', 'daniel.perez@email.com', 1112223334), ('Eleanor', 'Roberts', 'eleanor.roberts@email.com', 2223334445), ('Frederick', 'Turner', 'frederick.turner@email.com', 3334445556),
+('Georgia', 'Phillips', 'georgia.phillips@email.com', 4445556667), ('Harrison', 'Campbell', 'harrison.campbell@email.com', 5556667778), ('Isabella', 'Parker', 'isabella.parker@email.com', 6667778889), ('Joseph', 'Evans', 'joseph.evans@email.com', 7778889990),
+('Katherine', 'Edwards', 'katherine.edwards@email.com', 8889990001), ('Liam', 'Collins', 'liam.collins@email.com', 9990001112), ('Madison', 'Stewart', 'madison.stewart@email.com', 0001112223);
+
+
+
+-- 5. Inserting data into Property table
+INSERT INTO Property (Property_Name, Price_per_night, Availability_status, Created_at, User_ID) VALUES 
+('Cozy Loft', 100.00, 'Available', '2024-03-01', 11),
+('Luxury Villa', 250.00, 'Booked', '2024-03-02', 12),
+('Beach House', 175.00, 'Available', '2024-03-03', 13),
+('Mountain Cabin', 120.00, 'Booked', '2024-03-04', 14),
+('Downtown Apartment', 90.00, 'Available', '2024-03-05', 33),
+('Seaside Cottage', 150.00, 'Available', '2024-03-06', 16),
+('Rural Farmhouse', 110.00, 'Booked', '2024-03-07', 36),
+('City Penthouse', 300.00, 'Available', '2024-03-08', 18),
+('Lakefront Bungalow', 160.00, 'Booked', '2024-03-09', 40),
+('Garden Studio', 80.00, 'Available', '2024-03-10', 20),
+('Historic Mansion', 280.00, 'Available', '2024-03-11', 31),
+('Ski Chalet', 200.00, 'Booked', '2024-03-12', 32),
+('Desert Oasis', 180.00, 'Available', '2024-03-13', 15),
+('Tropical Retreat', 220.00, 'Booked', '2024-03-14', 34),
+('Urban Townhouse', 130.00, 'Available', '2024-03-15', 35),
+('Forest Lodge', 140.00, 'Booked', '2024-03-16', 17),
+('Riverside Villa', 260.00, 'Available', '2024-03-17', 37),
+('Hilltop Estate', 290.00, 'Booked', '2024-03-18', 38),
+('Country Inn', 190.00, 'Available', '2024-03-19', 39),
+('Modern Condo', 115.00, 'Booked', '2024-03-20', 19);
+
+
+
+-- 6. Inserting data into Booking table
+
+INSERT INTO Booking (Check_in_date, Check_out_date, Total_price, Property_ID, User_ID) VALUES
+('2024-06-01', '2024-06-06', 600.00, 2, 11), ('2024-06-02', '2024-06-07', 750.00, 5, 12),
+('2024-06-05', '2024-06-10', 900.00, 6, 13), ('2024-06-07', '2024-06-12', 1050.00, 7, 14),
+('2024-06-10', '2024-06-15', 850.00, 10, 15), ('2024-06-12', '2024-06-17', 950.00, 11, 16),
+('2024-06-15', '2024-06-20', 1120.00, 12, 17), ('2024-06-18', '2024-06-23', 780.00, 13, 18),
+('2024-06-20', '2024-06-25', 890.00, 14, 19), ('2024-06-22', '2024-06-27', 720.00, 15, 20),
+('2024-06-25', '2024-06-30', 650.00, 16, 31), ('2024-06-28', '2024-07-03', 880.00, 17, 32),
+('2024-07-01', '2024-07-06', 920.00, 18, 33), ('2024-07-04', '2024-07-09', 870.00, 19, 34),
+('2024-07-07', '2024-07-12', 930.00, 20, 35), ('2024-07-10', '2024-07-15', 990.00, 1, 36),
+('2024-07-13', '2024-07-18', 1040.00, 3, 37), ('2024-07-16', '2024-07-21', 970.00, 5, 38),
+('2024-07-19', '2024-07-24', 860.00, 7, 39), ('2024-07-22', '2024-07-27', 910.00, 9, 40),
+('2024-07-25', '2024-07-30', 780.00, 2, 11), ('2024-07-28', '2024-08-02', 700.00, 4, 12),
+('2024-08-01', '2024-08-06', 880.00, 6, 13), ('2024-08-04', '2024-08-09', 1020.00, 8, 14),
+('2024-08-07', '2024-08-12', 930.00, 10, 15), ('2024-08-10', '2024-08-15', 810.00, 12, 16), 
+('2024-08-13', '2024-08-18', 950.00, 14, 17), ('2024-08-16', '2024-08-21', 1025.00, 16, 18), 
+('2024-08-19', '2024-08-24', 770.00, 18, 19), ('2024-08-22', '2024-08-27', 890.00, 20, 20), 
+('2024-08-25', '2024-08-30', 640.00, 1, 31), ('2024-08-28', '2024-09-02', 700.00, 3, 32), 
+('2024-09-01', '2024-09-06', 880.00, 5, 33), ('2024-09-04', '2024-09-09', 1040.00, 7, 34), 
+('2024-09-07', '2024-09-12', 950.00, 9, 35);
+
+
+-- 7. Inserting data into Payment table
+INSERT INTO Payment (Amount, Payment_method, Payment_date, Booking_ID, User_ID) VALUES
+(750.00, 'Credit Card', '2024-06-08', 2, 12), (850.00, 'PayPal', '2024-06-16', 5, 15),
+(950.00, 'Debit Card', '2024-06-18', 6, 16), (780.00, 'Credit Card', '2024-06-23', 8, 18),
+(720.00, 'PayPal', '2024-06-27', 10, 20), (880.00, 'Debit Card', '2024-07-03', 12, 32),
+(920.00, 'Credit Card', '2024-07-07', 13, 33), (990.00, 'PayPal', '2024-07-15', 16, 36),
+(970.00, 'Debit Card', '2024-07-21', 18, 38), (910.00, 'Credit Card', '2024-07-27', 20, 40),
+(1020.00, 'Debit Card', '2024-08-09', 24, 14), (930.00, 'PayPal', '2024-08-12', 25, 15),
+(950.00, 'Credit Card', '2024-08-18', 27, 17), (1025.00, 'Debit Card', '2024-08-21', 28, 18),
+(890.00, 'Debit Card', '2024-08-27', 30, 20), (700.00, 'Credit Card', '2024-08-28', 32, 32),
+(870.00, 'PayPal', '2024-09-13', 37, 37), (980.00, 'Debit Card', '2024-09-16', 38, 38),
+(860.00, 'Credit Card', '2024-09-19', 39, 39), (940.00, 'PayPal', '2024-09-22', 40, 40);
+
+
+
+
+
+
+
+-- 8. Inserting data into Booking_Cancellation table
+INSERT INTO Booking_Cancellation (Refund_amount, Cancellation_date, Booking_ID) VALUES
+(600.00, '2024-06-08', 1), (900.00, '2024-06-11', 3),
+(1050.00, '2024-06-14', 4), (1120.00, '2024-06-21', 7),
+(890.00, '2024-06-26', 9), (650.00, '2024-07-01', 11),
+(930.00, '2024-07-12', 15), (1040.00, '2024-07-18', 17),
+(860.00, '2024-07-24', 19), (780.00, '2024-07-30', 21),
+(700.00, '2024-08-02', 22), (880.00, '2024-08-06', 23),
+(810.00, '2024-08-15', 26), (1025.00, '2024-08-21', 28),
+(770.00, '2024-08-24', 29), (640.00, '2024-08-30', 31),
+(880.00, '2024-09-06', 33), (1040.00, '2024-09-09', 34),
+(950.00, '2024-09-12', 35), (920.00, '2024-09-15', 36);
+
+-- 9. Inserting data into Property_Review table
+INSERT INTO Property_Review (Review_ID, Property_ID) VALUES 
+(1, 3), (2, 9), (3, 8), (4, 1), (5, 4) ,(6, 2), (7, 5), (8, 6), (9, 7), (10, 10),
+(11, 11), (12, 12), (13, 13), (14, 14), (15, 15), (16, 16), (17, 17),
+(18, 18), (19, 19), (20, 20);
+
+
+
+
+
+
+
+
+-- 10. Inserting data into Review table
+INSERT INTO Review (Rating, Comments, Created_at, User_ID) VALUES 
+(4.3, 'Clean and comfortable.', '2024-03-11', 11), (3.7, 'Could use some updates.', '2024-03-12', 12), 
+(4.1, 'Good value for the price.', '2024-03-13', 13), (4.9, 'Amazing hospitality!', '2024-03-14', 14), 
+(3.6, 'Decent but overpriced.', '2024-03-15', 15), (4.5, 'Great location and well-maintained.', '2024-03-16', 16),
+(3.9, 'Nice place but noisy at night.', '2024-03-17', 17),
+(4.7, 'Exceptional service and clean rooms.', '2024-03-18', 18),
+(3.8, 'Good experience but could improve.', '2024-03-19', 19),
+(4.2, 'Very cozy and inviting.', '2024-03-20', 20),
+(4.6, 'Perfect getaway spot.', '2024-03-21', 31),
+(3.5, 'Average stay, nothing special.', '2024-03-22', 32),
+(4.8, 'Loved everything about it!', '2024-03-23', 33),
+(4.0, 'Nice amenities and great host.', '2024-03-24', 34),
+(3.7, 'Decent stay but a bit pricey.', '2024-03-25', 35),
+(4.9, 'Fantastic experience, highly recommend!', '2024-03-26', 36),
+(3.6, 'Comfortable stay but slow Wi-Fi.', '2024-03-27', 37),
+(4.4, 'Spacious and well-equipped.', '2024-03-28', 38),
+(4.1, 'Friendly host and great ambiance.', '2024-03-29', 39),
+(3.9, 'Good value but needs better cleanliness.', '2024-03-30', 40);
+
+
+
+-- 11. Inserting data into House_Rules table
+INSERT INTO House_Rules (Descriptions, Property_ID) VALUES
+('No smoking indoors.', 1), ('No pets allowed.', 2),
+('Quiet hours after 10 PM.', 3), ('No parties or events.', 4),
+('Dispose of trash properly.', 5), ('No unregistered guests.', 6),
+('Check-out by 11 AM.', 7), ('No food in bedrooms.', 8),
+('Use coasters for drinks.', 9), ('Turn off lights when leaving.', 10),
+('No loud music.', 11), ('Clean kitchen after use.', 12),
+('Do not rearrange furniture.', 13), ('Report damages immediately.', 14),
+('No illegal activities.', 15), ('Respect neighbors.', 16),
+('Follow recycling guidelines.', 17), ('No open flames or candles.', 18),
+('Keep balcony doors closed when not in use.', 19), ('Use provided linens only.', 20),
+('No smoking indoors.', 3), -- House 3 also has the rule
+('No smoking indoors.', 5), -- House 5 also has the rule
+('No smoking indoors.', 7), -- House 7 also has the rule
+('No smoking indoors.', 9), -- House 9 also has the rule
+('No smoking indoors.', 11), -- House 11 also has the rule
+('No smoking indoors.', 13), -- House 13 also has the rule
+('No smoking indoors.', 15), -- House 15 also has the rule
+('No smoking indoors.', 17), -- House 17 also has the rule
+('No smoking indoors.', 19); -- House 19 also has the rule
+
+
+-- 12. Inserting data into Promotion table for even Property_IDs (2, 4, 6, ..., 20)
+INSERT INTO Promotion (Promo_code, Discount_amount, Expiry_date, Property_ID) VALUES
+('SAVE20', 20.00, '2024-12-31', 2), ('SUMMER15', 15.50, '2024-08-31', 4),
+('AUTUMN25', 25.00, '2024-11-30', 6), ('WINTER10', 10.00, '2025-02-28', 8),
+('SPRING30', 30.00, '2024-06-30', 10), ('GET10', 10.00, '2024-10-31', 12),
+('BOOKNOW15', 15.00, '2024-09-30', 14), ('HOLIDAY20', 20.00, '2024-12-25', 16),
+('TRAVEL25', 25.00, '2024-11-15', 18), ('DEAL30', 30.00, '2024-07-31', 20),
+('WELCOME10', 10.00, '2024-12-31', 1), ('SAVE15', 15.00, '2024-08-15', 3),
+('HOTDEAL20', 20.00, '2024-11-30', 5), ('WINTER25', 25.00, '2025-01-31', 7),
+('SPRING10', 10.00, '2024-06-15', 9), ('SUMMER5', 5.00, '2024-07-31', 11),
+('AUTUMN20', 20.00, '2024-10-10', 13), ('HOLIDAY15', 15.00, '2024-12-24', 15),
+('TRAVEL10', 10.00, '2024-09-30', 17), ('DEAL5', 5.00, '2024-07-15', 19);
+
+
+
+
+-- 13. Inserting data into Property_Amenity table
+INSERT INTO Property_Amenity (Property_ID, Amenity_ID) VALUES 
+(1, 1), (2, 2), (3, 3), (4, 4), (5, 5), (6, 2), (7, 1), (8, 4), 
+(9, 3), (10, 3), (11, 3), (12, 2), (13, 2), (14, 5), (15, 1), (16, 1), 
+(17, 3), (18, 2), (19, 2), (20, 2), (1, 3), (2, 3), (3, 1), (4, 5), (5, 4);
+
+
+-- 14. Inserting data into Amenity table
+INSERT INTO Amenity (Amenity_name) VALUES
+('Swimming Pool'),
+('Air Conditioning'),
+('Free Wi-Fi'),
+('Kitchen'),
+('Parking');
+
+
+-- 15. Inserting data into Property_Image table
+INSERT INTO airbnb.Property_Image (Image_URL, Property_ID) VALUES 
+('https://example.com/image1.jpg', 1), ('https://example.com/image2.jpg', 2),
+('https://example.com/image3.jpg', 3), ('https://example.com/image4.jpg', 4),
+('https://example.com/image5.jpg', 5), ('https://example.com/image6.jpg', 6),
+('https://example.com/image7.jpg', 7), ('https://example.com/image8.jpg', 8),
+('https://example.com/image9.jpg', 9), ('https://example.com/image10.jpg', 10),
+('https://example.com/image11.jpg', 11), ('https://example.com/image12.jpg', 12),
+('https://example.com/image13.jpg', 13), ('https://example.com/image14.jpg', 14),
+('https://example.com/image15.jpg', 15), ('https://example.com/image16.jpg', 16),
+('https://example.com/image17.jpg', 17), ('https://example.com/image18.jpg', 18),
+('https://example.com/image19.jpg', 19), ('https://example.com/image20.jpg', 20),
+('https://example.com/image1_2.jpg', 1), -- Second image for Property 1
+('https://example.com/image3_2.jpg', 3), -- Second image for Property 3
+('https://example.com/image5_2.jpg', 5), -- Second image for Property 5
+('https://example.com/image7_2.jpg', 7), -- Second image for Property 7
+('https://example.com/image9_2.jpg', 9), -- Second image for Property 9
+('https://example.com/image11_2.jpg', 11), -- Second image for Property 11
+('https://example.com/image13_2.jpg', 13), -- Second image for Property 13
+('https://example.com/image15_2.jpg', 15), -- Second image for Property 15
+('https://example.com/image17_2.jpg', 17), -- Second image for Property 17
+('https://example.com/image19_2.jpg', 19); -- Second image for Property 19
+
+
+-- 16. Inserting data into Guest_Identity table
+INSERT INTO Guest_Identity (ID_type, ID_number, ID_photo_URL, Selfie_URL, Verification_status, Submitted_at, User_ID, Language_ID) VALUES 
+('Passport', 100001, 'https://example.com/id1.jpg', 'https://example.com/selfie1.jpg', 'Verified', '2024-03-01', 11, 1),
+('Driver License', 100002, 'https://example.com/id2.jpg', 'https://example.com/selfie2.jpg', 'Verified', '2024-03-02', 12, 2),
+('National ID', 100003, 'https://example.com/id3.jpg', 'https://example.com/selfie3.jpg', 'Pending', '2024-03-03', 13, 3),
+('Passport', 100004, 'https://example.com/id4.jpg', 'https://example.com/selfie4.jpg', 'Verified', '2024-03-04', 14, 4),
+('Driver License', 100005, 'https://example.com/id5.jpg', 'https://example.com/selfie5.jpg', 'Rejected', '2024-03-05', 15, 5),
+('National ID', 100006, 'https://example.com/id6.jpg', 'https://example.com/selfie6.jpg', 'Verified', '2024-03-06', 16, 6),
+('Passport', 100007, 'https://example.com/id7.jpg', 'https://example.com/selfie7.jpg', 'Verified', '2024-03-07', 17, 7),
+('Driver License', 100008, 'https://example.com/id8.jpg', 'https://example.com/selfie8.jpg', 'Pending', '2024-03-08', 18, 8),
+('National ID', 100009, 'https://example.com/id9.jpg', 'https://example.com/selfie9.jpg', 'Verified', '2024-03-09', 19, 9),
+('Passport', 100010, 'https://example.com/id10.jpg', 'https://example.com/selfie10.jpg', 'Verified', '2024-03-10', 20, 10), 
+('Driver License', 100011, 'https://example.com/id11.jpg', 'https://example.com/selfie11.jpg', 'Verified', '2024-03-11', 31, 11),
+('National ID', 100012, 'https://example.com/id12.jpg', 'https://example.com/selfie12.jpg', 'Pending', '2024-03-12', 32, 12),
+('Passport', 100013, 'https://example.com/id13.jpg', 'https://example.com/selfie13.jpg', 'Verified', '2024-03-13', 33, 13),
+('Driver License', 100014, 'https://example.com/id14.jpg', 'https://example.com/selfie14.jpg', 'Rejected', '2024-03-14', 34, 14),
+('National ID', 100015, 'https://example.com/id15.jpg', 'https://example.com/selfie15.jpg', 'Verified', '2024-03-15', 35, 15),
+('Passport', 100016, 'https://example.com/id16.jpg', 'https://example.com/selfie16.jpg', 'Verified', '2024-03-16', 36, 16),
+('Driver License', 100017, 'https://example.com/id17.jpg', 'https://example.com/selfie17.jpg', 'Pending', '2024-03-17', 37, 17),
+('National ID', 100018, 'https://example.com/id18.jpg', 'https://example.com/selfie18.jpg', 'Verified', '2024-03-18', 38, 18),
+('Passport', 100019, 'https://example.com/id19.jpg', 'https://example.com/selfie19.jpg', 'Verified', '2024-03-19', 39, 19),
+('Driver License', 100020, 'https://example.com/id20.jpg', 'https://example.com/selfie20.jpg', 'Rejected', '2024-03-20', 40, 20);
+
+
+
+
+
+
+-- 17. Inserting data into Host_Identity table
+INSERT INTO airbnb.Host_Identity (Document_Type, Document_URL, User_ID) VALUES 
+('Passport', 'https://example.com/host_id1.jpg', 1), ('Driver License', 'https://example.com/host_id2.jpg', 2),
+('National ID', 'https://example.com/host_id3.jpg', 3), ('Passport', 'https://example.com/host_id4.jpg', 4),
+('Driver License', 'https://example.com/host_id5.jpg', 5), ('National ID', 'https://example.com/host_id6.jpg', 6),
+('Passport', 'https://example.com/host_id7.jpg', 7), ('Driver License', 'https://example.com/host_id8.jpg', 8),
+('National ID', 'https://example.com/host_id9.jpg', 9), ('Passport', 'https://example.com/host_id10.jpg', 10), ('Passport', 'https://example.com/host_id11.jpg', 21),
+('Driver License', 'https://example.com/host_id12.jpg', 22), ('National ID', 'https://example.com/host_id13.jpg', 23), ('Passport', 'https://example.com/host_id14.jpg', 24),
+('Driver License', 'https://example.com/host_id15.jpg', 25),
+('National ID', 'https://example.com/host_id16.jpg', 26), ('Passport', 'https://example.com/host_id17.jpg', 27), ('Driver License', 'https://example.com/host_id18.jpg', 28), ('National ID', 'https://example.com/host_id19.jpg', 29), ('Passport', 'https://example.com/host_id20.jpg', 30);
+
+
+
+-- 18. Inserting data into Host_Earnings table
+INSERT INTO Host_Earnings (Amount, Payout_method, Host_ID) VALUES 
+(1500.00, 'Bank', 3), (2000.50, 'PayPal', 9),
+(1750.75, 'Bank', 8), (3000.00, 'Bank', 1),
+(1200.00, 'PayPal', 4), (2500.00, 'Bank', 8),
+(1800.00, 'PayPal', 1), (2200.00, 'Bank', 8),
+(1900.00, 'PayPal', 9), (2750.00, 'Bank', 1),
+(1600.00, 'Bank', 1), (2100.50, 'PayPal', 8),
+(1850.75, 'Bank', 3), (3100.00, 'Bank', 4),
+(1300.00, 'PayPal', 4), (2600.00, 'Bank', 4),
+(1900.00, 'PayPal', 9), (2300.00, 'Bank', 8),
+(2000.00, 'PayPal', 1), (2850.00, 'Bank', 1), (1280.00, 'Bank', 4), 
+(350.75, 'Paypal', 3), (1300.00, 'Crypto', 8);
+
+
+-- 19. Inserting data into Language table
+INSERT INTO Language (Lang) VALUES
+('English'), ('Spanish'), ('French'), ('German'), ('Chinese'),
+('Japanese'), ('Russian'), ('Italian'), ('Portuguese'), ('Arabic'),
+('Hindi'), ('Korean'), ('Dutch'), ('Turkish'), ('Greek'),
+('Swedish'), ('Hebrew'), ('Thai'), ('Vietnamese'), ('Polish');
+
+
+-- 20. Inserting data into Discount table
+INSERT INTO airbnb.Discount (Start_date, End_date, Percentage, Property_ID) VALUES 
+('2024-01-01', '2024-01-10', 5, 3), ('2024-02-05', '2024-02-15', 10, 7),
+('2024-03-10', '2024-03-20', 15, 2), ('2024-04-01', '2024-04-10', 20, 9),
+('2024-05-15', '2024-05-25', 25, 5), ('2024-06-01', '2024-06-10', 30, 8),
+('2024-07-10', '2024-07-20', 35, 4), ('2024-08-05', '2024-08-15', 40, 1),
+('2024-09-01', '2024-09-10', 45, 6), ('2024-10-15', '2024-10-25', 50, 10),
+('2024-01-01', '2024-12-31', 0, 11), ('2024-01-01', '2024-12-31', 0, 12),
+('2024-01-01', '2024-12-31', 0, 13), ('2024-01-01', '2024-12-31', 0, 14),
+('2024-01-01', '2024-12-31', 0, 15), ('2024-01-01', '2024-12-31', 0, 16),
+('2024-01-01', '2024-12-31', 0, 17), ('2024-01-01', '2024-12-31', 0, 18),
+('2024-01-01', '2024-12-31', 0, 19), ('2024-01-01', '2024-12-31', 0, 20);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
